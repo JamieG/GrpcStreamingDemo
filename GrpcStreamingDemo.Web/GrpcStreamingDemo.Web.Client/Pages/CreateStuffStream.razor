@@ -1,0 +1,64 @@
+﻿@page "/create-stuff-stream"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<PageTitle>Create Stuff</PageTitle>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h2">Create Stuff (Stream)</MudText>
+    </MudItem>
+    <MudItem xs="12">
+        <MudStack Row="true">
+            <MudButton Variant="Variant.Filled" Disabled="IsBusy" OnClick="Create">
+                @if (IsBusy)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                    <MudText Class="ms-2">Streaming</MudText>
+                }
+                else
+                {
+                    <MudText>Create</MudText>
+                }
+            </MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlaylistRemove" Color="Color.Warning" Disabled="!CanClear" OnClick="Clear">
+                <MudText>Clear</MudText>
+            </MudButton>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12">
+        <MudStack Row="true">
+            @if (HasFailed)
+            {
+                <MudText>Oh noes!</MudText>
+            }
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudStack>
+                        @foreach (var foo in Foos)
+                        {
+                            <MudPaper Elevation="6" Outlined="true" Class="pa-2">
+                                <MudStack Row="true">
+                                    <MudIcon Icon="@Icons.Material.Filled.Factory" Color="Color.Primary"/>
+                                    <MudText>@foo.Text</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        }
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudStack>
+                        @foreach (var bar in Bars)
+                        {
+                            <MudPaper Elevation="6" Outlined="true" Class="pa-2">
+                                <MudStack Row="true">
+                                    <MudIcon Icon="@Icons.Material.Filled.Luggage" Color="Color.Secondary"/>
+                                    <MudText> @bar.Value</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        }
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudStack>
+    </MudItem>
+</MudGrid>

@@ -1,0 +1,37 @@
+﻿@page "/create-people"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<PageTitle>Create People</PageTitle>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h2">Create People (Repeated)</MudText>
+    </MudItem>
+    <MudItem xs="12">
+        <MudButton Variant="Variant.Filled" Disabled="IsBusy" OnClick="Create">Create</MudButton>
+    </MudItem>
+    <MudItem xs="12">
+        @if (IsBusy)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
+        }
+        else if (HasFailed)
+        {
+            <div>Oh noes!</div>
+        }
+        else
+        {
+            <MudStack>
+                @foreach (var person in Reply)
+                {
+                    <MudPaper Elevation="6" Outlined="true" Class="pa-2">
+                        <MudStack Row="true">
+                            <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
+                            <MudText> @person.FirstName&nbsp;@person.LastName</MudText>
+                        </MudStack>
+                    </MudPaper>
+                }
+            </MudStack>
+        }
+    </MudItem>
+</MudGrid>

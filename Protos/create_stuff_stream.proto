@@ -1,0 +1,27 @@
+﻿syntax = "proto3";
+package CreateStuffStream;
+
+option csharp_namespace = "GrpcStreamingDemo.Proto.CreateStuffStream";
+
+service CreateStuffStream {
+  rpc CreateStuff(CreateStuffStreamRequest) returns (stream Thing);
+}
+
+message CreateStuffStreamRequest {
+  int32 how_many = 1;
+}
+
+message Thing {
+  oneof ThingType {
+    Foo foo = 1;
+    Bar bar = 2;
+  }
+}
+
+message Foo {
+  string text = 1;
+}
+
+message Bar {
+  int32 value = 1;
+}

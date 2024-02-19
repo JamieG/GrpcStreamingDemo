@@ -1,0 +1,77 @@
+﻿@page "/file-download"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<PageTitle>File Download</PageTitle>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h2">File Download (Stream)</MudText>
+    </MudItem>
+    <MudItem xs="12">
+        <MudStack Row="true">
+            <MudButton Variant="Variant.Filled" Disabled="IsBusy" OnClick="ListFiles">
+                <MudText>List Files</MudText>
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Download" Disabled="IsBusy || !FilesSelected"
+                       OnClick="DownloadFiles">
+                <MudText>Download Files</MudText>
+            </MudButton>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12">
+        <MudStack>
+            @foreach (var file in Files)
+            {
+                <MudPaper Elevation="2" Class="pa-3">
+                    <MudStack>
+                        <MudStack Row="true" AlignItems="AlignItems.Center">
+                            @if (DownloadComplete(file))
+                            {
+                                <MudButton Variant="Variant.Filled" OnClick="_ => ClearDownload(file)">
+                                    <MudIcon Icon="@Icons.Material.Filled.Remove" Color="Color.Error"/>
+                                </MudButton>
+                            }
+                            else if (IsDownloading(file))
+                            {
+                                <MudButton Variant="Variant.Filled" Disabled="true">
+                                    <MudIcon Icon="@Icons.Material.Filled.Downloading" Color="Color.Warning"/>
+                                </MudButton>
+                            }
+                            else if (file.Selected)
+                            {
+                                <MudButton Variant="Variant.Filled" Disabled="IsDownloading(file)" OnClick="_ => ToggleFile(file)">
+                                    <MudIcon Icon="@Icons.Material.Filled.Download" Color="Color.Success"/>
+                                </MudButton>
+                            }
+                            else
+                            {
+                                <MudButton Variant="Variant.Filled" Disabled="IsDownloading(file)" OnClick="_ => ToggleFile(file)">
+                                    <MudIcon Icon="@Icons.Material.Outlined.Download" Color="Color.Primary"/>
+                                </MudButton>
+                            }
+                            <MudText>@file.Header.FileName - @file.Header.Bytes.Bytes().Humanize()</MudText>
+                        </MudStack>
+                        @if (IsDownloading(file, out var download))
+                        {
+                            @if (DownloadComplete(file))
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Save" OnClick="_ => DownloadFile(file)">
+                                    <MudText>Save</MudText>
+                                </MudButton>
+                            }
+                            else
+                            {
+                                var progress = DownloadProgress(download.BytesSentTotal, download.BytesRemaining);
+                                <MudProgressLinear Color="Color.Primary" Size="Size.Large" Value="progress" Class="my-3">
+                                    <MudText Align="Align.Right">@(progress)%</MudText>
+                                </MudProgressLinear>
+                                <MudText Align="Align.Center">@download.BytesSentTotal.Bytes().Humanize() / @file.Header.Bytes.Bytes().Humanize() Transferred</MudText>
+                            }
+                        }
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudStack>
+    </MudItem>
+</MudGrid>
