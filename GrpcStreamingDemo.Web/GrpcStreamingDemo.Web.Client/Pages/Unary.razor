@@ -1,0 +1,27 @@
+﻿@page "/unary"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<PageTitle>Unary</PageTitle>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h2">Greeter (Unary)</MudText>
+    </MudItem>
+    <MudItem xs="12">
+        <MudButton Variant="Variant.Filled" Disabled="IsBusy" OnClick="SayHello">Default</MudButton>
+    </MudItem>
+    <MudItem xs="12">
+        @if (IsBusy)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
+        }
+        else if (HasFailed)
+        {
+            <div>Oh noes!</div>
+        }
+        else if (HasReply)
+        {
+            <div>@Reply</div>
+        }
+    </MudItem>
+</MudGrid>

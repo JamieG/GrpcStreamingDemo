@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  
+  reverse-proxy:
+    image: traefik:v3.0
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443      
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      # Allows Traefik to listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mount the dynamic configuration
+      - ./certs-traefik.yml:/etc/traefik/dynamic/certs-traefik.yml
+      # Mount the directory containing the certs
+      - ./.certs\:/etc/certs/
+    networks:
+      - backend
+  
+  demo-web:
+    build:
+      context: ./
+      dockerfile: GrpcStreamingDemo.Web/GrpcStreamingDemo.Web/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.demo-web.rule=Host(`web.grpcdemo.local`)"
+      - "traefik.http.routers.demo-web.entrypoints=websecure"
+      - "traefik.http.routers.demo-web.tls=true"
+      - "traefik.http.services.demo-web.loadbalancer.server.port=5000"
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+
+  demo-service:
+    build:
+      context: ./
+      dockerfile: GrpcStreamingDemo.Service/Dockerfile
+    ports:
+      - "5001:5001"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
